@@ -1,0 +1,3 @@
+W,A,S,D- PARA MOVERSE
+ESPACIO PARA SALTAR
+L para atacar
