@@ -5,13 +5,13 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -27,7 +27,7 @@ public class PantallaPrincipal implements Screen {
 
     private Megaman game;
 
-    private OrthographicCamera cam;
+    public OrthographicCamera cam;
     private Viewport gamePort;
 
     public Hud hud;
@@ -61,8 +61,7 @@ public class PantallaPrincipal implements Screen {
 
 
         world = new World(new Vector2(0, -120 / Megaman.PPM), true);
-        world.setContactListener(new Contacto());
-        WorldContactListener w=new WorldContactListener(this);
+         WorldContactListener w = new WorldContactListener(this);
         world.setContactListener(w);
 
         new CreadorDeMapa(world, map, this);
@@ -101,13 +100,13 @@ public class PantallaPrincipal implements Screen {
     }
 
     public void handleInput() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ) {
-if (zero.saltado<=1){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            if (zero.saltado <= 1) {
 
-    zero.body.applyLinearImpulse(0, 180, zero.body.getWorldCenter().x, zero.body.getWorldCenter().y, true);
+                zero.body.applyLinearImpulse(0, 180, zero.body.getWorldCenter().x, zero.body.getWorldCenter().y, true);
 
-zero.saltado++;
-}
+                zero.saltado++;
+            }
             // zero.body.applyLinearImpulse(new Vector2(0, 180), zero.body.getWorldCenter(), true);
         }
 
@@ -151,6 +150,8 @@ zero.saltado++;
 
     @Override
     public void render(float delta) {
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         update(delta);
 
 
@@ -164,7 +165,6 @@ zero.saltado++;
 
         getGame().batch.end();
         hud.stage.draw();
-
 
 
     }

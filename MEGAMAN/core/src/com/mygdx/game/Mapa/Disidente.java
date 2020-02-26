@@ -18,6 +18,7 @@ import com.mygdx.game.ControlPrincipal.WinScreen;
 import com.mygdx.game.Megaman;
 
 public class Disidente extends Sprite {
+    public enum State {RUN};
 
     public World world;
     public Body body;
@@ -28,19 +29,26 @@ public class Disidente extends Sprite {
     public int previousX;
     public Fixture fixture;
     PantallaPrincipal pantalla;
+    private float stateTimer;
 
 
     private boolean derecha = true;
     Array<TextureRegion> frames = new Array<>();
     int stateTime;
 
+    public  State currentState;
+    public  State previousState;
 
     public Disidente(World w, PantallaPrincipal p) {
         super(p.getAtlasEnemigo().findRegion("disidentes"));
         world = w;
         pantalla = p;
 
-        for (int i = 1; i < 4; i++) {
+        currentState =  State.RUN;
+        previousState =  State.RUN;
+
+
+        for (int i = 2; i < 4; i++) {
             if (i == 1)
                 frames.add(new TextureRegion(getTexture(), 0, 0, 45, 45));
             frames.add(new TextureRegion(getTexture(), (i * 45), 0, 45, 45));
@@ -58,23 +66,48 @@ public class Disidente extends Sprite {
     }
 
 
-    public TextureRegion getFrame(float dt) {
-        stateTime += dt;
 
 
-        //setRegion((TextureRegion) run.getKeyFrame(stateTime, true));
-        if ((body.getLinearVelocity().x > 0 || !derecha) && !disidenterun.isFlipX()) {
-            disidenterun.flip(true, false);
-            derecha = false;
-        } else if ((body.getLinearVelocity().x < 0 || derecha) && disidenterun.isFlipX()) {
-            disidenterun.flip(true, false);
-            derecha = true;
-        }
+    public  State getState() {
 
-        return disidenterun;
+
+            return  State.RUN;
 
 
     }
+
+
+    public TextureRegion getFrame(float dt) {
+
+        currentState = getState();
+
+        TextureRegion region;
+        switch (currentState) {
+            default:
+            case RUN:
+                region = (TextureRegion) run.getKeyFrame(stateTimer, true);
+                break;
+
+
+
+        }
+
+        if ((body.getLinearVelocity().x < 0 || !derecha) && region.isFlipX()) {
+            region.flip(true, false);
+            derecha = false;
+        } else if ((body.getLinearVelocity().x > 0 || derecha) && !region.isFlipX()) {
+            region.flip(true, false);
+            derecha = true;
+        }
+        stateTimer = (currentState == previousState) ? (stateTimer + dt) : 0;
+        previousState = currentState;
+        return region;
+
+
+    }
+
+
+
 
     public void update(float dt) {
 
@@ -148,11 +181,6 @@ public class Disidente extends Sprite {
     }
 
     public void Muerte() {
-//        try {
-//            Thread.sleep(100);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
 
         pantalla.getGame().setScreen(new WinScreen(pantalla.getGame()));
 
